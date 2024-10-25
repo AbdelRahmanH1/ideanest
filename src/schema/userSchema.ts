@@ -1,4 +1,5 @@
 import { Role } from '@/enums/role.enum.js';
+import type { RefreshTokenInterface } from '@/interfaces/RefreshTokenInterface.js';
 import type { IUser } from '@/interfaces/UserInterface.js';
 import Joi from 'joi';
 
@@ -14,6 +15,6 @@ export const signInSchema = Joi.object<IUser>({
   password: Joi.string().min(6).max(20).required(),
 }).required();
 
-export const refreshTokenSchema = Joi.object({
+export const refreshTokenSchema = Joi.object<RefreshTokenInterface>({
   refresh_token: Joi.string().required(),
 }).required();
