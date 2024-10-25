@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+#Docker
+.dockerignore
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.pid.lock
+
+# Coverage directory
+coverage/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Build output
+dist/
+
+# Debug files
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Optional cache directories
+.cache/
+.parcel-cache/
+.nyc_output/
