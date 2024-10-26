@@ -1,5 +1,4 @@
 import User from '@/DB/models/userModel.js';
-import { Role } from '@/enums/role.enum.js';
 import type { IUser } from '@/interfaces/UserInterface.js';
 import bcrypt from 'bcrypt';
 import asynHandler from '@/utils/asyncHandler.js';
