@@ -26,6 +26,7 @@ const userSchema = new Schema<IUser>({
     maxlength: [20, 'Password cannot exceed 20 characters!'],
   },
   role: { type: String, enum: [Role.ADMIN, Role.USER], default: Role.USER },
+  organizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }],
 });
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
