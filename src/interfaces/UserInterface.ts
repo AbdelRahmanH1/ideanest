@@ -1,4 +1,3 @@
-import type { Role } from '@/enums/role.enum.js';
 import type { Types } from 'mongoose';
 
 export interface IUser {
@@ -6,6 +5,5 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  role?: Role;
   organizations: Types.ObjectId[];
 }
