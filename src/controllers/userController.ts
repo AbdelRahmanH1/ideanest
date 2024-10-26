@@ -6,9 +6,14 @@ import asynHandler from '@/utils/asyncHandler.js';
 import jwt from 'jsonwebtoken';
 import { errorResponse, successResponse } from '@/utils/reponseUtils.js';
 import type { Request, Response, NextFunction } from 'express';
-import { storeRefreshToken } from '@/services/redisService.js';
+import {
+  deleteRefreshToken,
+  getRefreshToken,
+  storeRefreshToken,
+} from '@/services/redisService.js';
 
 import { CustomError } from '@/utils/customErrorUtils.js';
+import type { RefreshTokenInterface } from '@/interfaces/RefreshTokenInterface.js';
 
 export const signUp = asynHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -46,5 +51,61 @@ export const signIn = asynHandler(
       accessToken,
       refreshToken,
     });
+  },
+);
+
+export const refreshToken = asynHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { refresh_token } = req.body as RefreshTokenInterface;
+
+    const sercretKey: string = process.env.TOKEN_SECRET || '';
+    const refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET || '';
+
+    const decoded = jwt.verify(refresh_token, refreshTokenSecret) as {
+      userId: string;
+      role: string;
+    };
+    console.log(decoded);
+
+    const savedRefreshToken = await getRefreshToken(decoded.userId);
+    if (!savedRefreshToken || savedRefreshToken !== refresh_token) {
+      return next(new CustomError('Invalid or expired refresh token', 401));
+    }
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId, role: decoded.role },
+      sercretKey,
+      {
+        expiresIn: '1h',
+      },
+    );
+    const newRefreshToken = jwt.sign(
+      { userId: decoded.userId, role: decoded.role },
+      refreshTokenSecret,
+      { expiresIn: '7d' },
+    );
+    await storeRefreshToken(decoded.userId, newRefreshToken);
+    return successResponse(res, 200, 'Token refreshed successfully', {
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken,
+    });
+  },
+);
+export const revokeRefreshToken = asynHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { refresh_token } = req.body as RefreshTokenInterface;
+    const refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET || '';
+
+    const decoded = jwt.verify(refresh_token, refreshTokenSecret) as {
+      userId: string;
+    };
+
+    const storedToken = await getRefreshToken(decoded.userId);
+    if (!storedToken || storedToken !== refresh_token) {
+      return next(
+        new CustomError('Refresh token not found or already revoked', 400),
+      );
+    }
+    await deleteRefreshToken(decoded.userId);
+    return successResponse(res, 200, 'Refresh token revoked successfully');
   },
 );
