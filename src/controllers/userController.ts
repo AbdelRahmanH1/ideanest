@@ -20,7 +20,7 @@ export const signUp = asynHandler(
     const body = req.body as IUser;
     const userExists = await User.findOne({ email: body.email });
     if (userExists) return errorResponse(res, 400, 'User already exists');
-    await User.create({ ...body, role: body.role ? body.role : Role.USER });
+    await User.create({ ...body });
     return successResponse(res, 201, 'User created successfully');
   },
 );
@@ -34,18 +34,12 @@ export const signIn = asynHandler(
     }
     const sercretKey: string = process.env.TOKEN_SECRET || '';
     const refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET || '';
-    const accessToken = jwt.sign(
-      { userId: user._id, role: user.role },
-      sercretKey,
-      { expiresIn: '1h' },
-    );
-    const refreshToken = jwt.sign(
-      { userId: user._id, role: user.role },
-      refreshTokenSecret,
-      {
-        expiresIn: '7d',
-      },
-    );
+    const accessToken = jwt.sign({ userId: user._id }, sercretKey, {
+      expiresIn: '1h',
+    });
+    const refreshToken = jwt.sign({ userId: user._id }, refreshTokenSecret, {
+      expiresIn: '7d',
+    });
     await storeRefreshToken(user._id.toString(), refreshToken);
     return successResponse(res, 200, 'login sucess', {
       accessToken,
@@ -84,8 +78,8 @@ export const refreshToken = asynHandler(
     );
     await storeRefreshToken(decoded.userId, newRefreshToken);
     return successResponse(res, 200, 'Token refreshed successfully', {
-      access_token: newAccessToken,
-      refresh_token: newRefreshToken,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
     });
   },
 );
