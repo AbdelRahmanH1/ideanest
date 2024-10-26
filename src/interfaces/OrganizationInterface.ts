@@ -1,9 +1,10 @@
 import type { Types } from 'mongoose';
+import type { IOrganizationMember } from './IOrganizationMemberInterface.js';
 
 export interface IOrganization {
-  _id?: string;
+  organization_id?: string;
   name: string;
   description?: string;
   createdBy: Types.ObjectId;
-  members: Types.ObjectId[];
+  members: IOrganizationMember[];
 }
