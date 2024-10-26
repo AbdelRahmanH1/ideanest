@@ -28,5 +28,19 @@ router.delete(
   validation(schema.deleteOrganizationSchema),
   controller.deleteOrganizationByID,
 );
+router.get(
+  '/:organization_id',
+  authentication,
+  validation(schema.getOrganizationByIDSchema),
+  controller.getOrganizationByID,
+);
 
+router.get('/', authentication, controller.getAllOrganizations);
+
+router.post(
+  '/:organization_id/invite',
+  authentication,
+  validation(schema.inviteToOrganizationSchema),
+  controller.inviteToOrganization,
+);
 export default router;

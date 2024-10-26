@@ -88,3 +88,117 @@ export const deleteOrganizationByID = asynHandler(
     );
   },
 );
+
+export const getOrganizationByID = asynHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { organization_id } = req.params;
+    const userId = req.user.id;
+
+    const organization = await Organization.findById(organization_id).populate(
+      'members.user',
+      'name email',
+    );
+
+    if (!organization) {
+      return next(new CustomError('Organization not found', 404));
+    }
+
+    const isOwner = organization.createdBy.toString() === userId;
+
+    const member = organization.members.find(
+      (member) => member.user.toString() === userId,
+    );
+
+    if (!isOwner && !member) {
+      return next(
+        new CustomError(
+          'Access denied. You are not authorized to view this organization.',
+          403,
+        ),
+      );
+    }
+    const responseResult = {
+      organization_id: organization._id,
+      name: organization.name,
+      description: organization.description,
+      organization_members: organization.members.map((member) => ({
+        name: member.user.name,
+        email: member.user.email,
+        access_level: member.accessLevel,
+      })),
+    };
+    return successResponse(res, 200, null, responseResult);
+  },
+);
+
+export const getAllOrganizations = asynHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user.id;
+
+    const organizations = await Organization.find({
+      $or: [{ createdBy: userId }, { 'members.user': userId }],
+    }).populate('members.user', 'name email');
+
+    const responseResult = organizations.map((org) => ({
+      organization_id: org._id.toString(),
+      name: org.name,
+      description: org.description,
+      organization_members: org.members.map((member) => ({
+        name: member.user.name,
+        email: member.user.email,
+        access_level: member.accessLevel,
+      })),
+    }));
+
+    return res.status(200).json(responseResult);
+  },
+);
+
+export const inviteToOrganization = asynHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { organization_id } = req.params;
+    const { user_email } = req.body;
+    const userId = req.user.id;
+
+    const existingOrganization = await Organization.findById(organization_id);
+    if (!existingOrganization) {
+      return next(new CustomError('Organization does not exist', 404));
+    }
+
+    const isOwner = existingOrganization.createdBy.toString() === userId;
+    const isAdmin = existingOrganization.members.some((member) => {
+      return (
+        member.user.toString() === userId && member.accessLevel === 'admin'
+      );
+    });
+    if (!isOwner && !isAdmin) {
+      return next(
+        new CustomError(
+          'You must be an admin or the owner to invite users.',
+          403,
+        ),
+      );
+    }
+
+    const userToInvite = await User.findOne({ email: user_email });
+    if (!userToInvite) {
+      return next(new CustomError('User does not exist', 404));
+    }
+    const isAlreadyMember = existingOrganization.members.some(
+      (member) => member.user.toString() === userToInvite._id.toString(),
+    );
+    if (isAlreadyMember) {
+      return next(
+        new CustomError('User is already a member of the organization', 400),
+      );
+    }
+    existingOrganization.members.push({
+      user: userToInvite.id,
+      accessLevel: Role.READONLY,
+    });
+    await existingOrganization.save();
+
+    //send email to the user
+    return successResponse(res, 200, 'User invited successfully');
+  },
+);
