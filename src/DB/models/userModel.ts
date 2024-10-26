@@ -1,4 +1,3 @@
-import { Role } from '@/enums/role.enum.js';
 import type { IUser } from '@/interfaces/UserInterface.js';
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
@@ -25,7 +24,6 @@ const userSchema = new Schema<IUser>({
     minlength: [6, 'Password must be at least 6 characters long! '],
     maxlength: [20, 'Password cannot exceed 20 characters!'],
   },
-  role: { type: String, enum: [Role.ADMIN, Role.USER], default: Role.USER },
   organizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }],
 });
 userSchema.pre('save', async function (next) {
