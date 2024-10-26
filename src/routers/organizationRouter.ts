@@ -1,12 +1,32 @@
 import { Router } from 'express';
 import { validation } from '@/middlewares/validation.js';
+import * as schema from '@/schema/organizationSchema.js';
 import * as controller from '@/controllers/organizationController.js';
+import { authentication } from '@/middlewares/authentication.js';
+
 const router = Router();
 
-router.post('/', controller.createOrganization);
-router.get('/:organization_id', controller.getOrganizationByID);
-router.get('/', controller.getAllOrganizations);
-router.put('/', controller.updateOrganization);
-router.delete('/:organization_id', controller.deleteOrganizationByID);
-router.post('/:organization_id/invite', controller.inviteToOrganization);
+router.post(
+  '/',
+  authentication,
+
+  validation(schema.createOrganizationSchema),
+  controller.createOrganization,
+);
+
+router.put(
+  '/:organization_id',
+  authentication,
+
+  validation(schema.updateOrganizationSchema),
+  controller.updateOrganization,
+);
+router.delete(
+  '/:organization_id',
+  authentication,
+
+  validation(schema.deleteOrganizationSchema),
+  controller.deleteOrganizationByID,
+);
+
 export default router;
