@@ -65,7 +65,6 @@ export const refreshToken = asynHandler(
       userId: string;
       role: string;
     };
-    console.log(decoded);
 
     const savedRefreshToken = await getRefreshToken(decoded.userId);
     if (!savedRefreshToken || savedRefreshToken !== refresh_token) {
