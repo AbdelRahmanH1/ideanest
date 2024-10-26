@@ -14,13 +14,8 @@ export const authentication = async (
     return next(new CustomError('Authorization header missing', 401));
   }
 
-  const BEARER_KEY = process.env.BEARER_KEY || '';
+  const extractedToken = token.split(' ')[1]?.trim();
 
-  if (!token.startsWith(BEARER_KEY)) {
-    return next(new CustomError('Token not valid', 400));
-  }
-
-  const extractedToken = token.split(BEARER_KEY)[1]?.trim();
   if (!extractedToken) {
     return next(new CustomError('Token missing', 401));
   }
