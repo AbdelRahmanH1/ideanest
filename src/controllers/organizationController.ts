@@ -1,10 +1,10 @@
-import Organization from '@/DB/models/organizationModel.js';
-import User from '@/DB/models/userModel.js';
-import { Role } from '@/enums/role.enum.js';
-import type { IOrganization } from '@/interfaces/OrganizationInterface.js';
-import asynHandler from '@/utils/asyncHandler.js';
-import { CustomError } from '@/utils/customErrorUtils.js';
-import { successResponse } from '@/utils/reponseUtils.js';
+import Organization from '../DB/models/organizationModel.js';
+import User from '../DB/models/userModel.js';
+import { Role } from '../enums/role.enum.js';
+import type { IOrganization } from '../interfaces/OrganizationInterface.js';
+import asynHandler from '../utils/asyncHandler.js';
+import { CustomError } from '../utils/customErrorUtils.js';
+import { successResponse } from '../utils/reponseUtils.js';
 import type { Request, Response, NextFunction } from 'express';
 
 export const createOrganization = asynHandler(

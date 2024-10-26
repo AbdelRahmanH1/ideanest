@@ -1,5 +1,5 @@
-import { Role } from '@/enums/role.enum.js';
-import type { IOrganization } from '@/interfaces/OrganizationInterface.js';
+import { Role } from '../../enums/role.enum.js';
+import type { IOrganization } from '../../interfaces/OrganizationInterface.js';
 import { model, Schema } from 'mongoose';
 
 const organizationSchema = new Schema<IOrganization>({

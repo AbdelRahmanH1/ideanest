@@ -1,5 +1,5 @@
-import User from '@/DB/models/userModel.js';
-import { CustomError } from '@/utils/customErrorUtils.js';
+import User from '../DB/models/userModel.js';
+import { CustomError } from '../utils/customErrorUtils.js';
 import type { Request, Response, NextFunction } from 'express';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 

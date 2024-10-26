@@ -1,8 +1,8 @@
-import type { IUser } from '@/interfaces/UserInterface.js';
+import type { IUser } from '../../interfaces/UserInterface.js';
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
 import { model, Schema } from 'mongoose';
-import { CustomError } from '@/utils/customErrorUtils.js';
+import { CustomError } from '../../utils/customErrorUtils.js';
 
 const userSchema = new Schema<IUser>({
   name: { type: String, required: true, min: 3, max: 10, trim: true },

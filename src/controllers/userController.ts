@@ -1,18 +1,18 @@
-import User from '@/DB/models/userModel.js';
-import type { IUser } from '@/interfaces/UserInterface.js';
+import User from '../DB/models/userModel.js';
+import type { IUser } from '../interfaces/UserInterface.js';
 import bcrypt from 'bcrypt';
-import asynHandler from '@/utils/asyncHandler.js';
+import asynHandler from '../utils/asyncHandler.js';
 import jwt from 'jsonwebtoken';
-import { errorResponse, successResponse } from '@/utils/reponseUtils.js';
+import { errorResponse, successResponse } from '../utils/reponseUtils.js';
 import type { Request, Response, NextFunction } from 'express';
 import {
   deleteRefreshToken,
   getRefreshToken,
   storeRefreshToken,
-} from '@/services/redisService.js';
+} from '../services/redisService.js';
 
-import { CustomError } from '@/utils/customErrorUtils.js';
-import type { RefreshTokenInterface } from '@/interfaces/RefreshTokenInterface.js';
+import { CustomError } from '../utils/customErrorUtils.js';
+import type { RefreshTokenInterface } from '../interfaces/RefreshTokenInterface.js';
 
 export const signUp = asynHandler(
   async (req: Request, res: Response, next: NextFunction) => {

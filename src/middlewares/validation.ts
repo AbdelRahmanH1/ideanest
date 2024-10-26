@@ -1,6 +1,6 @@
 import type { ObjectSchema } from 'joi';
 import type { Request, Response, NextFunction } from 'express';
-import { CustomError } from '@/utils/customErrorUtils.js';
+import { CustomError } from '../utils/customErrorUtils.js';
 import { Types } from 'mongoose';
 
 export const validation = (schema: ObjectSchema) => {

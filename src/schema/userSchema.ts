@@ -1,5 +1,5 @@
-import type { RefreshTokenInterface } from '@/interfaces/RefreshTokenInterface.js';
-import type { IUser } from '@/interfaces/UserInterface.js';
+import type { RefreshTokenInterface } from '../interfaces/RefreshTokenInterface.js';
+import type { IUser } from '../interfaces/UserInterface.js';
 import Joi from 'joi';
 
 export const signUpSchema = Joi.object<IUser>({

@@ -1,6 +1,6 @@
-import type { IOrganization } from '@/interfaces/OrganizationInterface.js';
-import { isValidObjectId } from '@/middlewares/validation.js';
 import Joi from 'joi';
+import type { IOrganization } from '../interfaces/OrganizationInterface.js';
+import { isValidObjectId } from 'mongoose';
 
 export const createOrganizationSchema = Joi.object<IOrganization>({
   name: Joi.string().required(),
