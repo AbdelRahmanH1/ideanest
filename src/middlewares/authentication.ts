@@ -1,6 +1,7 @@
+import User from '@/DB/models/userModel.js';
 import { CustomError } from '@/utils/customErrorUtils.js';
 import type { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 
 export const authentication = async (
   req: Request,
@@ -24,11 +25,13 @@ export const authentication = async (
     return next(new CustomError('Token missing', 401));
   }
 
-  const secretKey = process.env.SECRET_KEY || '';
+  const secretKey = process.env.TOKEN_SECRET || '';
 
   try {
-    const payload = jwt.verify(extractedToken, secretKey);
-    req.user = payload;
+    const payload = jwt.verify(extractedToken, secretKey) as JwtPayload;
+    const userInfo = await User.findById(payload.userId);
+    req.user = userInfo;
+
     next();
   } catch (error) {
     return next(new CustomError('Invalid Token', 401));
